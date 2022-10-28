@@ -11,7 +11,7 @@ contract('StarNotary', accs => {
         const instance = await StarNotary.deployed();
         const tokenId = 1,
               name = 'Awesome Star';
-        await instance.createStar(name, tokenId, {from: owner});
+        await instance.createStar(name, tokenId, { from: owner });
         const newStarName = await instance.tokenIdToStar.call(tokenId);
         assert.equal(newStarName, name, 'Names do not match');
     });
@@ -23,8 +23,8 @@ contract('StarNotary', accs => {
               name = 'World Star',
               user = accounts[1],
               price = web3.utils.toWei('.01', 'ether');
-        await instance.createStar(name, tokenId, {from: user});
-        await instance.putStarUpForSale(tokenId, price, {from: user});
+        await instance.createStar(name, tokenId, { from: user });
+        await instance.putStarUpForSale(tokenId, price, { from: user });
         const starPrice = await instance.starsForSale.call(tokenId);
         assert.equal(starPrice, price, 'Prices do not match');
     });
@@ -38,14 +38,14 @@ contract('StarNotary', accs => {
               buyer = accounts[2],
               price = web3.utils.toWei('.01', 'ether'),
               payment = web3.utils.toWei('0.05', 'ether');
-        await instance.createStar(name, tokenId, {from: seller});
-        await instance.putStarUpForSale(tokenId, price, {from: seller});
+        await instance.createStar(name, tokenId, { from: seller });
+        await instance.putStarUpForSale(tokenId, price, { from: seller });
         const sellerBalancePreSale = await web3.eth.getBalance(seller);
-        await instance.buyStar(tokenId, {from: buyer, value: payment});
+        await instance.buyStar(tokenId, { from: buyer, value: payment });
         const sellerBalancePostSale = await web3.eth.getBalance(seller);
         assert.equal(
-            Number(sellerBalancePreSale) + Number(price), 
-            Number(sellerBalancePostSale), 
+            Number(sellerBalancePreSale) + Number(price),
+            Number(sellerBalancePostSale),
             'Seller did not receive correct funds'
         );
     });
@@ -59,16 +59,16 @@ contract('StarNotary', accs => {
               buyer = accounts[2],
               price = web3.utils.toWei('.01', 'ether'),
               payment = web3.utils.toWei('0.05', 'ether');
-        await instance.createStar(name, tokenId, {from: seller});
-        await instance.putStarUpForSale(tokenId, price, {from: seller});
-        await instance.buyStar(tokenId, {from: buyer, value: payment});
+        await instance.createStar(name, tokenId, { from: seller });
+        await instance.putStarUpForSale(tokenId, price, { from: seller });
+        await instance.buyStar(tokenId, { from: buyer, value: payment });
         const owner = await instance.ownerOf.call(tokenId);
         assert.equal(owner, buyer, 'Buyer should be the owner of the purchased star');
     });
 
 
     it('reduces buyer\'s balance correctly after purchase', async () => {
-        
+
         async function _getTxCost(txResponse) {
             const txDetails = await web3.eth.getTransaction(txResponse.tx);
             const gasPrice = txDetails.gasPrice;
@@ -83,15 +83,15 @@ contract('StarNotary', accs => {
               buyer = accounts[2],
               price = web3.utils.toWei('.01', 'ether'),
               payment = web3.utils.toWei('0.05', 'ether');
-        await instance.createStar(name, tokenId, {from: seller});
-        await instance.putStarUpForSale(tokenId, price, {from: seller});
+        await instance.createStar(name, tokenId, { from: seller });
+        await instance.putStarUpForSale(tokenId, price, { from: seller });
         const buyerBalancePreSale = await web3.eth.getBalance(buyer);
-        const tx = await instance.buyStar(tokenId, {from: buyer, value: payment});
+        const tx = await instance.buyStar(tokenId, { from: buyer, value: payment });
         const buyerBalancePostSale = await web3.eth.getBalance(buyer);
         const txCost = await _getTxCost(tx);
         assert.closeTo(
-            Number(buyerBalancePreSale) - Number(price) - txCost, 
-            Number(buyerBalancePostSale), 
+            Number(buyerBalancePreSale) - Number(price) - txCost,
+            Number(buyerBalancePostSale),
             100000,     // delta
             'Correct funds not deducted from buyer');
     });
