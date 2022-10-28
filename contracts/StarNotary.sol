@@ -41,4 +41,26 @@ contract StarNotary is ERC721 {
         starsForSale[_tokenId] = _price;
     }
 
+
+    // Buy any star that are listed for sale.
+    function buyStar(uint256 _tokenId) public payable {
+        uint256 cost = starsForSale[_tokenId];
+        require(cost > 0, "The Star is not up for sale");
+        require(msg.value >= cost, "Not enough ether provided");
+
+        // Get the current owner of the token
+        address owner = ownerOf(_tokenId);
+        
+        // Pass the ownership of token to the new owner, i.e msg.sender
+        _transfer(owner, msg.sender, _tokenId);
+
+        // Charge the cost of the star from the new owner
+        payable(owner).transfer(cost);
+        
+        // Send back the change
+        if (msg.value > cost) {
+            payable(msg.sender).transfer(msg.value - cost);
+        }
+    }
+
 }
