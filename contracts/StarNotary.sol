@@ -64,9 +64,23 @@ contract StarNotary is ERC721 {
     }
 
 
-    // Implement Task 1 lookUptokenIdToStarInfo
     function lookUptokenIdToStarInfo (uint _tokenId) public view returns (string memory) {
         return tokenIdToStar[_tokenId].name;
+    }
+
+
+    // Exchange Stars function
+    function exchangeStars(uint256 _tokenId1, uint256 _tokenId2) public {
+        address owner1 = ownerOf(_tokenId1);
+        address owner2 = ownerOf(_tokenId2);
+        // Check if the owner of _tokenId1 or _tokenId2 is the sender
+        // You don't have to check for the price of the token (star)
+        require(owner1 == msg.sender || owner2 == msg.sender,
+                "You can't exchange as you own neither of the stars");
+
+        // Exchange
+        _transfer(owner1, owner2, _tokenId1);
+        _transfer(owner2, owner1, _tokenId2);
     }
 
 }

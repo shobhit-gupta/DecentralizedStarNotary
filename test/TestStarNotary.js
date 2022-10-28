@@ -122,5 +122,31 @@ contract('StarNotary', accs => {
         assert.equal(starName, name, 'Names do not match');
     });
 
-    
+
+    it('lets 2 users exchange stars', async () => {
+        const instance = await StarNotary.deployed();
+
+        // 1. create 2 Stars with different tokenId
+        const tokenIdA = 8,
+              nameA = 'Dhruv Tara',
+              userA = accounts[1];
+        const tokenIdB = 9,
+              nameB = 'Jam Tara',
+              userB = accounts[2];
+        await instance.createStar(nameA, tokenIdA, { from: userA });
+        await instance.createStar(nameB, tokenIdB, { from: userB });
+
+        // 2. Call the exchangeStars functions implemented in the Smart Contract
+        await instance.exchangeStars(tokenIdA, tokenIdB, { from: userA });
+
+        // 3. Verify that the owners changed
+        const ownerA = await instance.ownerOf.call(tokenIdA),
+              ownerB = await instance.ownerOf.call(tokenIdB);
+        assert.equal(ownerA, userB, 'Owner didn\'t change as expected');
+        assert.equal(ownerB, userA, 'Owner didn\'t change as expected');
+
+    });
+
+
+
 });
