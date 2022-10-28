@@ -95,5 +95,32 @@ contract('StarNotary', accs => {
             100000,     // delta
             'Correct funds not deducted from buyer');
     });
+
+
+    // Implement Task 2 Add supporting unit tests
+
+    it('can add the star token name and star symbol properly', async () => {
+        // 1. create a Star with different tokenId
+        const instance = await StarNotary.deployed();
+        const tokenId = 6,
+              name = 'Pole Star';
+        await instance.createStar(name, tokenId, { from: owner });
+        //2. Call the name and symbol properties in your Smart Contract and compare with the name and symbol provided
+        const tokenName = await instance.name();
+        const tokenSymbol = await instance.symbol();
+        assert.equal(tokenName, 'SGStarToken', 'Invalid token name');
+        assert.equal(tokenSymbol, 'SGSTR', 'Invalid token symbol');
+    });
+
+
+    it('lookUptokenIdToStarInfo test', async () => {
+        const instance = await StarNotary.deployed();
+        const tokenId = 7,
+              name = 'Universal Star';
+        await instance.createStar(name, tokenId, { from: owner });
+        const starName = await instance.lookUptokenIdToStarInfo.call(tokenId);
+        assert.equal(starName, name, 'Names do not match');
+    });
+
     
 });
