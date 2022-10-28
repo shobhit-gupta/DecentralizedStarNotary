@@ -148,5 +148,23 @@ contract('StarNotary', accs => {
     });
 
 
+    it('lets a user transfer a star', async () => {
+        const instance = await StarNotary.deployed();
+        // 1. create a Star with different tokenId
+        const tokenId = 10,
+              name = 'Kantara',
+              userA = accounts[1],
+              userB = accounts[2];
+        await instance.createStar(name, tokenId, { from: userA });
+
+        // 2. use the transferStar function implemented in the Smart Contract
+        await instance.transferStar(userB, tokenId, { from: userA });
+
+        // 3. Verify the star owner changed.
+        const starOwner = await instance.ownerOf.call(tokenId);
+        assert(starOwner, userB, 'Star was not transferred');
+    });
+
+
 
 });
