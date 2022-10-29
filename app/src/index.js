@@ -1,5 +1,5 @@
 import Web3 from "web3";
-import metaCoinArtifact from "../../build/contracts/MetaCoin.json";
+import starNotaryArtifact from "../../build/contracts/StarNotary.json";
 
 const App = {
   web3: null,
@@ -12,50 +12,56 @@ const App = {
     try {
       // get contract instance
       const networkId = await web3.eth.net.getId();
-      const deployedNetwork = metaCoinArtifact.networks[networkId];
+      const deployedNetwork = starNotaryArtifact.networks[networkId];
       this.meta = new web3.eth.Contract(
-        metaCoinArtifact.abi,
+        starNotaryArtifact.abi,
         deployedNetwork.address,
       );
-
       // get accounts
       const accounts = await web3.eth.getAccounts();
       this.account = accounts[0];
-
-      this.refreshBalance();
+      
     } catch (error) {
       console.error("Could not connect to contract or chain.");
     }
   },
 
-  refreshBalance: async function() {
-    const { getBalance } = this.meta.methods;
-    const balance = await getBalance(this.account).call();
-
-    const balanceElement = document.getElementsByClassName("balance")[0];
-    balanceElement.innerHTML = balance;
+  createStar: async function() {
+    // Fetch input
+    const name = document.getElementById("starName").value;
+    const id = document.getElementById("starId").value;
+    // User Ix - Pre
+    App.setStatus(`Creating star for ${this.account}... (please wait)`);
+    // Perform
+    const { createStar } = this.meta.methods;
+    await createStar(name, id).send({ from: this.account });
+    // User Ix - Post
+    App.setStatus(`New Star Owner is ${this.account}.`);
   },
 
-  sendCoin: async function() {
-    const amount = parseInt(document.getElementById("amount").value);
-    const receiver = document.getElementById("receiver").value;
-
-    this.setStatus("Initiating transaction... (please wait)");
-
-    const { sendCoin } = this.meta.methods;
-    await sendCoin(receiver, amount).send({ from: this.account });
-
-    this.setStatus("Transaction complete!");
-    this.refreshBalance();
+  // Implement Task 4 Modify the front end of the DAPP
+  lookUp: async function () {
+    // Fetch input
+    const id = document.getElementById("lookid").value;
+    // User Ix - Pre
+    this.setStatus(`Looking up token id ${id}... (please wait)`);
+    // Perform
+    const { lookUptokenIdToStarInfo } = this.meta.methods;
+    const starName = await lookUptokenIdToStarInfo(id).call() || 'Unnamed';
+    // User Ix - Post
+    this.setStatus(`${starName} has the token id ${id}`);
   },
 
   setStatus: function(message) {
     const status = document.getElementById("status");
     status.innerHTML = message;
   },
+
 };
 
+
 window.App = App;
+
 
 window.addEventListener("load", function() {
   if (window.ethereum) {
@@ -74,3 +80,8 @@ window.addEventListener("load", function() {
 
   App.start();
 });
+
+
+
+
+
