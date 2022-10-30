@@ -5,9 +5,25 @@
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
   </head>
   <style>
+    body {
+      background-color: #fefefe;
+    }
     input {
       display: block;
       margin-bottom: 12px;
+    }
+    #userIx {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      padding: 32px;
+      width: 100%;
+      background-color: #2e2e2e;
+      color: white;
+      font-size: x-large;
+      border-color: black;
+      border-top-style: solid;
+      border-width: 1px;
     }
   </style>
   <body>
@@ -41,7 +57,12 @@
     <hr>
 
     <br>
-    <span id="status"></span>
+
+    <br>
+    <div id="userIx">
+      <span> → &nbsp; </span>
+      <span id="status">Use the above forms to interact with the DAPP!</span>
+    </div>
     <br>
 
     <script src="index.js"></script>
