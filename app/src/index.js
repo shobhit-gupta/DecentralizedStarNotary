@@ -51,6 +51,20 @@ const App = {
     this.setStatus(`${starName} has the token id ${id}`);
   },
 
+  sellStar: async function () {
+    // Fetch input
+    const id = document.getElementById('saleId').value;
+    const price =this.web3.utils.toWei(document.getElementById('sellingPrice').value, 'ether');
+    // User Ix - Pre
+    this.setStatus(`Putting star up for sale... (please wait)`);
+    // Perform
+    const { putStarUpForSale } = this.meta.methods;
+    await putStarUpForSale(id, price).send({ from: this.account });
+    // User Ix - Post
+    this.setStatus(`Star with token ${id} is now up for sale`);
+  },
+
+
   setStatus: function(message) {
     const status = document.getElementById("status");
     status.innerHTML = message;
