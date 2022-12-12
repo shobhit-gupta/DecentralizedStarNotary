@@ -89,6 +89,17 @@ const App = {
     this.setStatus(``);
   },
 
+  transferStar: async function () {
+    // Fetch input
+    const to = document.getElementById('transferTo').value;
+    const id = document.getElementById('transferId').value;
+    // User Ix - Pre
+    this.setStatus(`Transferring star... (please wait)`);
+    // Perform
+    const { transferStar } = this.meta.methods;
+    // User Ix - Post
+    this.setStatus(``);
+  },
 
   setStatus: function(message) {
     const status = document.getElementById("status");
