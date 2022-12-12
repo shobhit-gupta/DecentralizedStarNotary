@@ -77,6 +77,18 @@ const App = {
     this.setStatus(`Bought star with token ${id}`);
   },
 
+  exchangeStars: async function () {
+    // Fetch input
+    const id1 = document.getElementById('exchangeStarId1').value;
+    const id2 = document.getElementById('exchangeStarId2').value;
+    // User Ix - Pre
+    this.setStatus(`Exchanging stars... (please wait)`);
+    // Perform
+    const { exchangeStars } = this.meta.methods;
+    // User Ix - Post
+    this.setStatus(``);
+  },
+
 
   setStatus: function(message) {
     const status = document.getElementById("status");
