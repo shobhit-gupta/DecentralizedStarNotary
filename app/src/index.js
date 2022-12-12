@@ -54,7 +54,7 @@ const App = {
   sellStar: async function () {
     // Fetch input
     const id = document.getElementById('saleId').value;
-    const price =this.web3.utils.toWei(document.getElementById('sellingPrice').value, 'ether');
+    const price = this.web3.utils.toWei(document.getElementById('sellingPrice').value, 'ether');
     // User Ix - Pre
     this.setStatus(`Putting star up for sale... (please wait)`);
     // Perform
@@ -62,6 +62,19 @@ const App = {
     await putStarUpForSale(id, price).send({ from: this.account });
     // User Ix - Post
     this.setStatus(`Star with token ${id} is now up for sale`);
+  },
+
+  buyStar: async function () {
+    // Fetch input
+    const id = document.getElementById('purchaseId').value;
+    const etherToSend = this.web3.utils.toWei(document.getElementById('ether').value, 'ether');
+    // User Ix - Pre
+    this.setStatus(`Buying star... (please wait)`);
+    // Perform
+    const { buyStar } = this.meta.methods;
+    await buyStar(id).send({ from: this.account, value: etherToSend });
+    // User Ix - Post
+    this.setStatus(`Bought star with token ${id}`);
   },
 
 
